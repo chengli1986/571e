@@ -137,6 +137,7 @@ LIBRARIES :=
 ################################################################################
 
 # CUDA code generation flags
+# oh... so armv7l doesn't support sm_10...
 ifneq ($(OS_ARCH),armv7l)
 GENCODE_SM10    := -gencode arch=compute_10,code=sm_10
 endif
