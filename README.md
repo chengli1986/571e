@@ -1,4 +1,4 @@
-# 571e
+# EECE571E Project
 
 ## My mid 2010 MacBook Pro 
 
