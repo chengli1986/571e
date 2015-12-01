@@ -2,6 +2,7 @@
 
 ## My MBP mid 2010 Nvidia GeForce GT 330M
 
+```
 ./bin/x86_64/darwin/release/deviceQuery Starting...
 
  CUDA Device Query (Runtime API) version (CUDART static linking)
@@ -42,3 +43,6 @@ Device 0: "GeForce GT 330M"
 
 deviceQuery, CUDA Driver = CUDART, CUDA Driver Version = 6.0, CUDA Runtime Version = 6.0, NumDevs = 1, Device0 = GeForce GT 330M
 Result = PASS
+
+```
+
