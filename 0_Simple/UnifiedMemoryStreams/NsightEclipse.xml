@@ -1,0 +1,75 @@
+<entry>
+    <name>Unified Memory Streams</name>
+    <description><![CDATA[This sample demonstrates the use of OpenMP and streams with Unified Memory on a single GPU.]]></description>
+    <whitepaper></whitepaper>
+    <minspec>SM 3.0</minspec>
+    <keywords>CUDA,CUBLAS,OpenMP,cluster,multi-GPU Support,Unified Memory</keywords>
+    <scope>1:CUDA Basic Topics,1:CUDA Systems Integration,1:Unified Memory</scope>
+    <files>
+    </files>
+    <cudaapi>cudaMallocManaged</cudaapi>
+    <cudaapi>cudaStreamAttachManagedMem</cudaapi>
+    
+    <keyconcepts level="basic">CUDA Systems Integration</keyconcepts>
+    <keyconcepts level="basic">OpenMP</keyconcepts>
+    <keyconcepts level="basic">CUBLAS</keyconcepts>
+    <keyconcepts level="basic">Multithreading</keyconcepts>
+    <keyconcepts level="basic">Unified Memory</keyconcepts>
+    <keyconcepts level="basic">Streams</keyconcepts>
+
+    <!-- *** Additional project definition information *** -->
+    <!-- Libraries that the project should be linked against. Document may contain any number of "libraries" elements. -->
+    <!-- Attributes "os" and "arch" are optional and may be used in any combination. -->
+    <!-- "framework" attribute will be ignored on platforms other then Mac OS X -->
+    <library>cublas</library>
+
+    <!-- Either absolute or relative to sample -->
+    <library-path os="windows"></library-path>
+    <library-path os="linux" arch="x86_64">/usr/local/cuda/lib64</library-path>
+
+    <!-- Either absolute or relative to sample -->
+    <include-path>./</include-path>
+    <include-path>../</include-path>
+    <include-path>../../common/inc</include-path>
+    
+    
+    <!-- Can be either "separate" or "whole", omitting this element means that sample can be compiled either way -->
+    <devicecompilation>whole</devicecompilation>
+
+    <!-- These options will be passed to NVCC compiler as is and for all files -->
+    <nvcc-compiler></nvcc-compiler>
+    <nvcc-compiler file="UnifiedMemoryStreams.cu"></nvcc-compiler>
+    <sm-arch>sm30</sm-arch>
+    <sm-arch>sm50</sm-arch>
+    <sm-arch>sm32</sm-arch>
+    <sm-arch>sm35</sm-arch>
+
+    <!-- One of "exe|dll|lib" (exe is default) -->
+    <type>exe</type>
+
+    <!-- By default IDE will open file "samplename.(cu|cpp) -->
+    <primary-file>UnifiedMemoryStreams.cu</primary-file>
+
+    <!-- Collection of [OS][:arch] tokens -->
+    <supported-env>linux:x86_64, linux:i686, windows7, macosx:x86_64, macosx:i686, :arm</supported-env>
+    <recipe>
+        <name>UnifiedMemoryStreams</name>
+        <keywords>
+          <keyword>openMP</keyword>
+          <keyword>Streams</keyword>
+          <keyword>Unified Memory</keyword>
+        </keywords>
+        <gencode>
+            <sm>30</sm>
+            <sm>32</sm>
+            <sm>35</sm>
+            <sm>50</sm>
+        </gencode>
+        <libraries>
+          <library>cublas</library>
+        </libraries>
+        <supportedbuilds>
+            <build>makefile</build>
+        </supportedbuilds>
+    </recipe>
+</entry>
