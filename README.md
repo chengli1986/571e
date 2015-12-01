@@ -1,8 +1,10 @@
 # 571e
 
-## My MBP mid 2010 Nvidia GeForce GT 330M (Microarchitecture=Tesla)
+## My mid 2010 MacBook Pro 
 
-About this [card](http://www.notebookcheck.net/nvidia-geforce-gt-330m.22437.0.html?id=17654)
+Nvidia GeForce GT 330M (Tesla Microarchitecture)
+
+More about this [card](http://www.notebookcheck.net/nvidia-geforce-gt-330m.22437.0.html?id=17654)
 
 Official Product Website: http://www.geforce.com/hardware/notebook-gpus/geforce-gt-330m/features
 
@@ -10,6 +12,7 @@ Wikipedia of Nvidia product line:
 * https://en.wikipedia.org/wiki/GeForce_300_series
 * https://en.wikipedia.org/wiki/List_of_Nvidia_graphics_processing_units
 
+### GT330M Device Info
 
 ```
 ./bin/x86_64/darwin/release/deviceQuery 
@@ -54,6 +57,31 @@ Device 0: "GeForce GT 330M"
 
 deviceQuery, CUDA Driver = CUDART, CUDA Driver Version = 6.0, CUDA Runtime Version = 6.0, NumDevs = 1, Device0 = GeForce GT 330M
 Result = PASS
-
 ```
 
+### GT330M Bandwidth Test Result
+
+```
+[CUDA Bandwidth Test] - Starting...
+Running on...
+
+ Device 0: GeForce GT 330M
+ Quick Mode
+
+ Host to Device Bandwidth, 1 Device(s)
+ PINNED Memory Transfers
+   Transfer Size (Bytes)	Bandwidth(MB/s)
+   33554432			1544.8
+
+ Device to Host Bandwidth, 1 Device(s)
+ PINNED Memory Transfers
+   Transfer Size (Bytes)	Bandwidth(MB/s)
+   33554432			3306.0
+
+ Device to Device Bandwidth, 1 Device(s)
+ PINNED Memory Transfers
+   Transfer Size (Bytes)	Bandwidth(MB/s)
+   33554432			21352.8
+
+Result = PASS
+```
