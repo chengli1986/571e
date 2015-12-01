@@ -5,13 +5,16 @@
 About this [card](http://www.notebookcheck.net/nvidia-geforce-gt-330m.22437.0.html?id=17654)
 
 Official Product Website: http://www.geforce.com/hardware/notebook-gpus/geforce-gt-330m/features
+
 Wikipedia of Nvidia product line: 
 * https://en.wikipedia.org/wiki/GeForce_300_series
 * https://en.wikipedia.org/wiki/List_of_Nvidia_graphics_processing_units
 
 
 ```
-./bin/x86_64/darwin/release/deviceQuery Starting...
+./bin/x86_64/darwin/release/deviceQuery 
+
+Starting...
 
  CUDA Device Query (Runtime API) version (CUDART static linking)
 
