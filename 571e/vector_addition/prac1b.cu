@@ -44,6 +44,7 @@ int main(int argc, char **argv)
   // allocate memory for array
 
   h_x = (float *)malloc(nsize*sizeof(float));
+  // this is the difference
   cudaSafeCall(cudaMalloc((void **)&d_x, nsize*sizeof(float)));
 
   // execute kernel

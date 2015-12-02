@@ -31,6 +31,7 @@
 __global__ void
 vectorAdd(const float *A, const float *B, float *C, int numElements)
 {
+    // index of 
     int i = blockDim.x * blockIdx.x + threadIdx.x;
 
     if (i < numElements)
@@ -49,9 +50,11 @@ main(void)
     cudaError_t err = cudaSuccess;
 
     // Print the vector length to be used, and compute its size
+    //long int numElements = 500000;
     int numElements = 50000;
     size_t size = numElements * sizeof(float);
-    printf("[Vector addition of %d elements]\n", numElements);
+    //long int size = numElements * sizeof(float);
+    printf("[Vector addition of %d elements with size of %lu]\n", numElements, size);
 
     // Allocate the host input vector A
     float *h_A = (float *)malloc(size);
@@ -128,8 +131,9 @@ main(void)
     // Launch the Vector Add CUDA Kernel
     int threadsPerBlock = 256;
     int blocksPerGrid =(numElements + threadsPerBlock - 1) / threadsPerBlock;
-    printf("CUDA kernel launch with %d blocks of %d threads\n", blocksPerGrid, threadsPerBlock);
+    printf("CUDA kernel launched with %d blocks of %d threads...\n", blocksPerGrid, threadsPerBlock);
     vectorAdd<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, numElements);
+    //vectorAdd<<<2, threadsPerBlock>>>(d_A, d_B, d_C, numElements);
     err = cudaGetLastError();
 
     if (err != cudaSuccess)
@@ -137,7 +141,7 @@ main(void)
         fprintf(stderr, "Failed to launch vectorAdd kernel (error code %s)!\n", cudaGetErrorString(err));
         exit(EXIT_FAILURE);
     }
-
+    printf("CUDA kernel -- Done!\n");
     // Copy the device result vector in device memory to the host result vector
     // in host memory.
     printf("Copy output data from the CUDA device to the host memory\n");
@@ -159,6 +163,7 @@ main(void)
         }
     }
 
+    printf("CPU Result=%f, GPU Result=%f\n", h_A[0]+h_B[0], h_C[0]);
     printf("Test PASSED\n");
 
     // Free device global memory

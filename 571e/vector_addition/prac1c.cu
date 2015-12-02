@@ -62,9 +62,10 @@ int main(int argc, char **argv)
 
   h_x = (float *)malloc(nsize*sizeof(float));
   cudaSafeCall(cudaMalloc((void **)&d_x, nsize*sizeof(float)));
-  h_x2 = (float *)malloc(nsize*sizeof(float));
+#if 1
+  //h_x2 = (float *)malloc(nsize*sizeof(float));
   cudaSafeCall(cudaMalloc((void **)&d_x2, nsize*sizeof(float)));
-
+#endif
   // execute kernel
   
   /* initiating the value of first vector */
@@ -76,7 +77,7 @@ int main(int argc, char **argv)
   cudaCheckMsg("my_first_kernel execution failed\n");
   
   /* Add the second vector to the first */
-	add_vector<<<nblocks,nthreads>>>(d_x2, d_x);
+  add_vector<<<nblocks,nthreads>>>(d_x2, d_x);
   // copy back results and print them out
 
   /* copy the result to host vector */

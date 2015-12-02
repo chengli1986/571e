@@ -49,7 +49,8 @@ int main(int argc, char **argv)
 
   cudaMemcpy(h_x,d_x,nsize*sizeof(float),cudaMemcpyDeviceToHost);
 
-  for (n=0; n<nsize; n++) printf(" n,  x  =  %d  %f \n",n,h_x[n]);
+  for (n=0; n<nsize; n++) 
+     printf(" thread count,  thread ID  =  %d  %f \n",n,h_x[n]);
 
   // free memory 
 
