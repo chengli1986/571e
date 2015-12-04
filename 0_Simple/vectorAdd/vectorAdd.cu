@@ -18,6 +18,7 @@
  */
 
 #include <stdio.h>
+#include <time.h>
 
 // For the CUDA runtime routines (prefixed with "cuda_")
 #include <cuda_runtime.h>
@@ -49,10 +50,9 @@ main(void)
     cudaError_t err = cudaSuccess;
 
     // Print the vector length to be used, and compute its size
-    //long int numElements = 500000;
     int numElements = 50000;
     size_t size = numElements * sizeof(float);
-    //long int size = numElements * sizeof(float);
+    time_t t;
     printf("INFO: Vector addition of %d elements with size of %lu\n", numElements, size);
 
     // Allocate the host input vector A
@@ -63,6 +63,8 @@ main(void)
 
     // Allocate the host output vector C
     float *h_C = (float *)malloc(size);
+
+    srand((unsigned) time(&t));
 
     // Verify that allocations succeeded
     if (h_A == NULL || h_B == NULL || h_C == NULL)
@@ -79,7 +81,7 @@ main(void)
     }
     for (int j = 0; j < 3; j++)
     {
-    	printf("DEBUG: h_A[%d]=%f, h_B[%d]=%f\n", j, h_A[0], j ,h_B[0]);
+    	printf("DEBUG: h_A[%d]=%f, h_B[%d]=%f\n", j, h_A[j], j ,h_B[j]);
     }
 
     // Allocate the device input vector A
