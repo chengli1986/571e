@@ -136,3 +136,5 @@ Update the kernel launch:
 ```
 add<<<(N + M-1) / M,M>>>(d_a, d_b, d_c, N);
 ```
+
+* Before we look at what atomic operations are and why you care, you should know that atomic opera- tions on global memory are supported only on GPUs of compute capability 1.1 or higher. Furthermore, atomic operations on shared memory require a GPU of compute capability 1.2 or higher. Because of the superset nature of compute capability versions, GPUs of compute capability 1.2 therefore support both shared memory atomics and global memory atomics. Similarly, GPUs of compute capa- bility 1.3 support both of these as well.
