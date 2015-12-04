@@ -42,7 +42,8 @@ ifeq ($(ARMv7),1)
 endif
 
 # Project folders that contain CUDA samples
-PROJECTS ?= $(shell find 0_Simple 1_Utilities 2_Graphics 3_Imaging 4_Finance 5_Simulations 6_Advanced 7_CUDALibraries -name Makefile)
+# add EECE571e samples to main Makefile
+PROJECTS ?= $(shell find EECE571e 0_Simple 1_Utilities 2_Graphics 3_Imaging 4_Finance 5_Simulations 6_Advanced 7_CUDALibraries -name Makefile)
 
 FILTER-OUT :=
 
