@@ -95,7 +95,7 @@ Result = PASS
 * Watch out your GPU device shared memory, where in my case, it's only 16KB. Specifying large working set can results in the following error.
 
 ```
-error:
+ptxas Error “function uses too much shared data”
 ```
 
 * excerpt of CUDA SDK simpleAtomicIntrinsics
@@ -122,4 +122,17 @@ you must pass the same flag to the compiler.
 
 Note that this program is meant to demonstrate the basics of using the atomic instructions, not to demonstrate 
 a useful computation.
+```
+
+* Typical problems are not friendly multiples of blockDim.x Avoid accessing beyond the end of the arrays:
+```
+__global__ void add(int *a, int *b, int *c, int n) { 
+	int index = threadIdx.x + blockIdx.x * blockDim.x; 
+	if (index < n)
+        	c[index] = a[index] + b[index];
+}
+```
+Update the kernel launch:
+```
+add<<<(N + M-1) / M,M>>>(d_a, d_b, d_c, N);
 ```
