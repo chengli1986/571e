@@ -27,8 +27,11 @@ __global__ void my_first_kernel(float *x)
 
 int main(int argc, char **argv)
 {
-  float *h_x, *d_x;
-  int   nblocks, nthreads, nsize, n; 
+  /* host copy of h_x */
+  float *h_x;
+  /* device copy of d_x */
+  float *d_x;
+  int   nblocks, nthreads, nsize; 
 
   // set number of blocks, and threads per block
 
@@ -37,8 +40,9 @@ int main(int argc, char **argv)
   nsize    = nblocks*nthreads ;
 
   // allocate memory for array
-
+  // reserve memory on HOST
   h_x = (float *)malloc(nsize*sizeof(float));
+  // reserve memory on Device
   cudaMalloc((void **)&d_x, nsize*sizeof(float));
 
   // execute kernel
@@ -49,8 +53,8 @@ int main(int argc, char **argv)
 
   cudaMemcpy(h_x,d_x,nsize*sizeof(float),cudaMemcpyDeviceToHost);
 
-  for (n=0; n<nsize; n++) 
-     printf(" thread count,  thread ID  =  %d  %f \n",n,h_x[n]);
+  for (int n=0; n<nsize; n++) 
+     printf("INFO: thread count,  thread ID  =  %d  %f \n",n,h_x[n]);
 
   // free memory 
 

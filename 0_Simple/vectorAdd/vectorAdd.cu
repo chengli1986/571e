@@ -31,7 +31,6 @@
 __global__ void
 vectorAdd(const float *A, const float *B, float *C, int numElements)
 {
-    // index of 
     int i = blockDim.x * blockIdx.x + threadIdx.x;
 
     if (i < numElements)
@@ -54,7 +53,7 @@ main(void)
     int numElements = 50000;
     size_t size = numElements * sizeof(float);
     //long int size = numElements * sizeof(float);
-    printf("[Vector addition of %d elements with size of %lu]\n", numElements, size);
+    printf("INFO: Vector addition of %d elements with size of %lu\n", numElements, size);
 
     // Allocate the host input vector A
     float *h_A = (float *)malloc(size);
@@ -71,12 +70,16 @@ main(void)
         fprintf(stderr, "Failed to allocate host vectors!\n");
         exit(EXIT_FAILURE);
     }
-
+    //printf("test rand()=%d\n", rand());
     // Initialize the host input vectors
     for (int i = 0; i < numElements; ++i)
     {
         h_A[i] = rand()/(float)RAND_MAX;
         h_B[i] = rand()/(float)RAND_MAX;
+    }
+    for (int j = 0; j < 3; j++)
+    {
+    	printf("DEBUG: h_A[%d]=%f, h_B[%d]=%f\n", j, h_A[0], j ,h_B[0]);
     }
 
     // Allocate the device input vector A
@@ -111,7 +114,7 @@ main(void)
 
     // Copy the host input vectors A and B in host memory to the device input vectors in
     // device memory
-    printf("Copy input data from the host memory to the CUDA device\n");
+    printf("INFO: Copy input data from the host memory to the CUDA device\n");
     err = cudaMemcpy(d_A, h_A, size, cudaMemcpyHostToDevice);
 
     if (err != cudaSuccess)
@@ -131,7 +134,7 @@ main(void)
     // Launch the Vector Add CUDA Kernel
     int threadsPerBlock = 256;
     int blocksPerGrid =(numElements + threadsPerBlock - 1) / threadsPerBlock;
-    printf("CUDA kernel launched with %d blocks of %d threads...\n", blocksPerGrid, threadsPerBlock);
+    printf("INFO: CUDA kernel launched with %d blocks of %d threads...", blocksPerGrid, threadsPerBlock);
     vectorAdd<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, numElements);
     //vectorAdd<<<2, threadsPerBlock>>>(d_A, d_B, d_C, numElements);
     err = cudaGetLastError();
@@ -141,10 +144,10 @@ main(void)
         fprintf(stderr, "Failed to launch vectorAdd kernel (error code %s)!\n", cudaGetErrorString(err));
         exit(EXIT_FAILURE);
     }
-    printf("CUDA kernel -- Done!\n");
+    printf(" Done!\n");
     // Copy the device result vector in device memory to the host result vector
     // in host memory.
-    printf("Copy output data from the CUDA device to the host memory\n");
+    printf("INFO: Copy output data from the CUDA device to the host memory\n");
     err = cudaMemcpy(h_C, d_C, size, cudaMemcpyDeviceToHost);
 
     if (err != cudaSuccess)
@@ -163,8 +166,8 @@ main(void)
         }
     }
 
-    printf("CPU Result=%f, GPU Result=%f\n", h_A[0]+h_B[0], h_C[0]);
-    printf("Test PASSED\n");
+    printf("INFO: CPU Result=%f, GPU Result=%f\n", h_A[0]+h_B[0], h_C[0]);
+    printf("INFO: Test PASSED\n");
 
     // Free device global memory
     err = cudaFree(d_A);
@@ -210,7 +213,7 @@ main(void)
         exit(EXIT_FAILURE);
     }
 
-    printf("Done\n");
+    printf("INFO: Done\n");
     return 0;
 }
 
