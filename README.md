@@ -85,3 +85,41 @@ Running on...
 
 Result = PASS
 ```
+
+### Notes
+
+* Be careful about the working set size and their corresponding blocks and threads; for example, when working set is 512, i.e. N=512, if only 1 block is used, the thread number has to be set to 512 otherwise there will not be enough threads running the calculation; however, it depends how you write your kernel.
+
+* For atomic operation, sm_11 needs to be added to Makefile so that atomicAdd() function can be recognized.
+
+* Watch out your GPU device shared memory, where in my case, it's only 16KB. Specifying large working set can results in the following error.
+
+```
+error:
+```
+
+* excerpt of CUDA SDK simpleAtomicIntrinsics
+```
+CUDA Sample "simpleAtomics"
+
+This code sample is meant to trivially exercise and demonstrate CUDA's global memory atomic functions:
+
+atomicAdd()
+atomicSub()
+atomicExch()
+atomicMax()
+atomicMin()
+atomicInc()
+atomicdec()
+atomicCAS()
+atomicAnd()
+atomicOr()
+atomicXor()
+
+This program requires compute capability 1.1.  To compile the code, therefore, note that the flag "-arch sm_11"
+is passed to the nvcc compiler driver in the build step for simpleAtomics.cu.  To use atomics in your programs,
+you must pass the same flag to the compiler.
+
+Note that this program is meant to demonstrate the basics of using the atomic instructions, not to demonstrate 
+a useful computation.
+```
