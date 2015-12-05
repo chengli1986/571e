@@ -10,7 +10,8 @@
 #include <time.h>
 
 /* when block=1, threads have to be the
-same as  */
+ * the maximum based on current kernel
+ * implementations  */
 #define N 512
 #define THREADS_PER_BLOCK 512
 
@@ -53,6 +54,7 @@ int main(int argc, char **argv)
   
    srand((unsigned) time(&t));
    printf("DEBUG: Size of 'int' type: %lu\n", sizeof(int));
+   printf("DEBUG: Total footprint size: %d bytes\n", size);
 
    // allocate device copies of a, b, c
    cudaMalloc( (void**)&dev_a, size );
@@ -80,9 +82,12 @@ int main(int argc, char **argv)
    cudaMemcpy( dev_a, a, size, cudaMemcpyHostToDevice ); 
    cudaMemcpy( dev_b, b, size, cudaMemcpyHostToDevice );
    
-   // launch add() kernel with N parallel blocks
-   printf("INFO: Launching CUDA kernel: dot product with blocks=%d, threads=%d...", 1, THREADS_PER_BLOCK);
-   dot_product<<< 1, THREADS_PER_BLOCK >>>( dev_a, dev_b, dev_c );
+   int threadsPerBlock = THREADS_PER_BLOCK;
+   int blocksPerGrid = (N + threadsPerBlock - 1) / threadsPerBlock;
+
+   // launch dot_product() kernel with N parallel threads
+   printf("INFO: Launching CUDA kernel: dot product with blocks=%d, threads=%d...", blocksPerGrid, THREADS_PER_BLOCK);
+   dot_product<<< blocksPerGrid, THREADS_PER_BLOCK >>>( dev_a, dev_b, dev_c );
    
    printf("  Done\n");
 

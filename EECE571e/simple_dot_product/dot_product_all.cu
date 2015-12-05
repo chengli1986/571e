@@ -11,7 +11,6 @@
 
 #define N (2048*2048)
 #define THREADS_PER_BLOCK 512
-// results in 8192 blocks
 
 //
 // kernel routine
@@ -26,13 +25,12 @@ __global__ void dot_product(const int *a, const int *b, int *c)
    
    __syncthreads();
 
-   if (threadIdx.x == 0) {
+   if (0 == threadIdx.x) {
       int sum = 0;
       /* iterate over only threads in the block */
-      for (int i=0; i<THREADS_PER_BLOCK; i++)
+      for (int i=0; i<THREADS_PER_BLOCK; ++i)
          sum += temp[i];
       /* Tricks: only works for sm_11... read the simpleAtomicIntrinsics sample */
-      /* Hmm, results are negative... need to debug */
       atomicAdd( c, sum );
    }
 }
@@ -55,6 +53,7 @@ int main(int argc, char **argv)
   
    srand((unsigned) time(&t));
    printf("DEBUG: Size of 'int' type: %lu\n", sizeof(int));
+   printf("DEBUG: Total footprint size: %d bytes\n", size);
 
    // allocate device copies of a, b, c
    cudaMalloc( (void**)&dev_a, size );
@@ -81,18 +80,23 @@ int main(int argc, char **argv)
    // copy inputs to device
    cudaMemcpy( dev_a, a, size, cudaMemcpyHostToDevice ); 
    cudaMemcpy( dev_b, b, size, cudaMemcpyHostToDevice );
+   // the bug is lacking of this line... sigh
+   cudaMemcpy( dev_c, c, sizeof(int), cudaMemcpyHostToDevice );
 
    int blocksPerGrid = (N + THREADS_PER_BLOCK - 1) / THREADS_PER_BLOCK;
-   // launch add() kernel with N parallel blocks
+   // launch dot_product() kernel with N parallel blocks
    printf("INFO: Launching CUDA kernel: dot product with blocks=%d, threads=%d...", blocksPerGrid, THREADS_PER_BLOCK);
    
-   //dot_product<<< blocksPerGrid, THREADS_PER_BLOCK >>>( dev_a, dev_b, dev_c );
-   dot_product<<< N/THREADS_PER_BLOCK, THREADS_PER_BLOCK >>>( dev_a, dev_b, dev_c );
+   dot_product<<< blocksPerGrid, THREADS_PER_BLOCK >>>( dev_a, dev_b, dev_c );
+   //dot_product<<< N/THREADS_PER_BLOCK, THREADS_PER_BLOCK >>>( dev_a, dev_b, dev_c );
    
    printf("  Done\n");
-
+   
+   printf("DEBUG: c2 is: %d @ %p\n", *c, &c);
+   
    // copy device result back to host copy of c
    cudaMemcpy( c, dev_c, sizeof(int), cudaMemcpyDeviceToHost );
+   printf("DEBUG: c3 is: %d @ %p\n", *c, &c);
   
 #if 1
    //result = 0;
@@ -108,17 +112,15 @@ int main(int argc, char **argv)
 #if 1
       printf("DEBUG: a[0]=%d, b[0]=%d\n", a[0], b[0]);
       printf("DEBUG: a[%d]=%d, b[%d]=%d, c=%d\n", 1, a[1], 1, b[1], *c);
-      //printf("Checking results %d\n", a[0]+b[0]-c[0]);
 #endif
-
- 
-   free( a ); 
-   free( b ); 
-   free( c );
 
    cudaFree( dev_a );
    cudaFree( dev_b );
    cudaFree( dev_c );
+
+   free( a ); 
+   free( b ); 
+   free( c );
 
    cudaDeviceReset();
 

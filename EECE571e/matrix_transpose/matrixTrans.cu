@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 
-#define N 1024
+#define N 16
 /* can't change threads number because
  * this example is a 2-D array, which means
  * each blocks will have 16*16 = 256 threads
@@ -13,11 +13,20 @@
  */
 #define THREADS_PER_BLOCK 16
 
+/*  
+
+ 1 2 3     1 4 7
+ 4 5 6 ==> 2 5 8
+ 7 8 9     3 6 9
+
+*/
+
 __global__
 void transpose(float *in, float *out, int width) {
 //void transpose(float* in, float* out, int width) {
     int tx = blockIdx.x * blockDim.x + threadIdx.x; 
     int ty = blockIdx.y * blockDim.y + threadIdx.y; 
+    // threadID of [x,y] to threadID of [y,x]
     out[tx * width + ty] = in[ty * width + tx];
 }
 

@@ -126,10 +126,8 @@ a useful computation.
 
 * Typical problems are not friendly multiples of blockDim.x Avoid accessing beyond the end of the arrays:
 ```
-__global__ void add(int *a, int *b, int *c, int n) { 
 	int index = threadIdx.x + blockIdx.x * blockDim.x; 
-	if (index < n)
-        	c[index] = a[index] + b[index];
+        c[index] = a[index] + b[index];
 }
 ```
 Update the kernel launch:
@@ -140,3 +138,13 @@ add<<<(N + M-1) / M,M>>>(d_a, d_b, d_c, N);
 * Before we look at what atomic operations are and why you care, you should know that atomic opera- tions on global memory are supported only on GPUs of compute capability 1.1 or higher. Furthermore, atomic operations on shared memory require a GPU of compute capability 1.2 or higher. Because of the superset nature of compute capability versions, GPUs of compute capability 1.2 therefore support both shared memory atomics and global memory atomics. Similarly, GPUs of compute capa- bility 1.3 support both of these as well.
 
 * The index of a thread and its thread ID relate to each other in a straightforward way: For a one-dimensional block, they are the same; for a two-dimensional block of size (Dx, Dy),the thread ID of a thread of index (x, y) is (x + y Dx); for a three-dimensional block of size (Dx, Dy, Dz), the thread ID of a thread of index (x, y, z) is (x + y Dx + z Dx Dy). There is a limit to the number of threads per block, since all threads of a block are expected to reside on the same processor core and must share the limited memory resources of that core. 
+
+* A warp executes one common instruction at a time, so full efficiency is realized when all 32 threads of a warp agree on their execution path. If threads of a warp diverge via a data-dependent conditional branch, the warp serially executes each branch path taken, disabling threads that are not on that path, and when all paths complete, the threads converge back to the same execution path. Branch divergence occurs only within a warp; different warps execute independently regardless of whether they are executing common or disjoint code paths.
+
+* Each CUDA core is also known as a Streaming Processor or shader unit. The streaming multiprocessor (SM) contains 8 streaming processors (SP). These SMs only get one instruction at time which means that the 8 SPs all execute the same instruction. This is done through a warp ( 32 threads ) where the 8 SPs spend 4 clock cycles executing a single instruction on multiple data (SIMD). Consider the whole GPU to be a couple of SIMD units.... Nvidia calls it SIMT ( Single Instruction Multiple Threads).
+
+* When number of threads is not a multiple of preferred block size, insert bounds test into kernel. Just like what has been done in vectorAdd example where numElements = 50000 and block is set to 96.
+
+* The multiprocessor creates, manages, schedules, and executes threads in groups of 32 parallel threads called warps. Individual threads composing a warp start together at the same program address, but they have their own instruction address counter and register state and are therefore free to branch and execute independently.
+
+* If an atomic instruction executed by a warp reads, modifies, and writes to the same location in global memory for more than one of the threads of the warp, each read/ modify/write to that location occurs and they are all serialized, but the order in which they occur is undefined.
