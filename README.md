@@ -148,3 +148,5 @@ add<<<(N + M-1) / M,M>>>(d_a, d_b, d_c, N);
 * The multiprocessor creates, manages, schedules, and executes threads in groups of 32 parallel threads called warps. Individual threads composing a warp start together at the same program address, but they have their own instruction address counter and register state and are therefore free to branch and execute independently.
 
 * If an atomic instruction executed by a warp reads, modifies, and writes to the same location in global memory for more than one of the threads of the warp, each read/ modify/write to that location occurs and they are all serialized, but the order in which they occur is undefined.
+
+* 95% confidence interval: http://www.graphpad.com/guides/prism/6/statistics/index.htm?stat_more_about_confidence_interval.htm
