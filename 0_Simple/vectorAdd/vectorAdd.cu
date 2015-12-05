@@ -23,6 +23,9 @@
 // For the CUDA runtime routines (prefixed with "cuda_")
 #include <cuda_runtime.h>
 
+#define N 50000
+#define THREADS_PER_BLOCK 256
+
 /**
  * CUDA Kernel Device code
  *
@@ -50,7 +53,7 @@ main(void)
     cudaError_t err = cudaSuccess;
 
     // Print the vector length to be used, and compute its size
-    int numElements = 50000;
+    int numElements = N;
     size_t size = numElements * sizeof(float);
     time_t t;
     printf("INFO: Vector addition of %d elements with size of %lu\n", numElements, size);
@@ -134,11 +137,11 @@ main(void)
     }
 
     // Launch the Vector Add CUDA Kernel
-    int threadsPerBlock = 256;
+    int threadsPerBlock = THREADS_PER_BLOCK;
     int blocksPerGrid =(numElements + threadsPerBlock - 1) / threadsPerBlock;
+
     printf("INFO: CUDA kernel launched with %d blocks of %d threads...", blocksPerGrid, threadsPerBlock);
     vectorAdd<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, numElements);
-    //vectorAdd<<<2, threadsPerBlock>>>(d_A, d_B, d_C, numElements);
     err = cudaGetLastError();
 
     if (err != cudaSuccess)

@@ -32,6 +32,7 @@ __global__ void dot_product(const int *a, const int *b, int *c)
       for (int i=0; i<THREADS_PER_BLOCK; i++)
          sum += temp[i];
       /* Tricks: only works for sm_11... read the simpleAtomicIntrinsics sample */
+      /* Hmm, results are negative... need to debug */
       atomicAdd( c, sum );
    }
 }

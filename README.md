@@ -88,7 +88,7 @@ Result = PASS
 
 ### Notes
 
-* Be careful about the working set size and their corresponding blocks and threads; for example, when working set is 512, i.e. N=512, if only 1 block is used, the thread number has to be set to 512 otherwise there will not be enough threads running the calculation; however, it depends how you write your kernel.
+* Be careful about the working set size and their corresponding blocks and threads; for example, when working set is 512, i.e. N=512, if only 1 block is used, the thread number has to be set to 512 otherwise there will not be enough threads running the calculation; however, it depends how you write your kernel. Also, another example is matrix transpose, when N=32 meaning that matrix size is 32 by 32, setting the threads per block to be 32 seems to trample the data easily. Not clear now it's due to shared memory or something else.
 
 * For atomic operation, sm_11 needs to be added to Makefile so that atomicAdd() function can be recognized.
 
@@ -138,3 +138,5 @@ add<<<(N + M-1) / M,M>>>(d_a, d_b, d_c, N);
 ```
 
 * Before we look at what atomic operations are and why you care, you should know that atomic opera- tions on global memory are supported only on GPUs of compute capability 1.1 or higher. Furthermore, atomic operations on shared memory require a GPU of compute capability 1.2 or higher. Because of the superset nature of compute capability versions, GPUs of compute capability 1.2 therefore support both shared memory atomics and global memory atomics. Similarly, GPUs of compute capa- bility 1.3 support both of these as well.
+
+* The index of a thread and its thread ID relate to each other in a straightforward way: For a one-dimensional block, they are the same; for a two-dimensional block of size (Dx, Dy),the thread ID of a thread of index (x, y) is (x + y Dx); for a three-dimensional block of size (Dx, Dy, Dz), the thread ID of a thread of index (x, y, z) is (x + y Dx + z Dx Dy). There is a limit to the number of threads per block, since all threads of a block are expected to reside on the same processor core and must share the limited memory resources of that core. 
