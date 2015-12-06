@@ -51,8 +51,13 @@ int main(int argc, char **argv)
    
    for (int i=0; i<N; i++)
    {
+#if 0
       a[i] = rand()%N;
       b[i] = rand()%N;
+#else
+      a[i] = 5;
+      b[i] = 5;
+#endif
    }
    printf("DEBUG: a[%d]=%d, b[%d]=%d\n",0, a[0], 0, b[0]);
    printf("DEBUG: a[%d]=%d, b[%d]=%d\n",1, a[1], 1, b[1]);

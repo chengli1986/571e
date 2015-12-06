@@ -15,9 +15,9 @@
 // kernel routine
 // 
 
-__global__ void add_block(int *a, int *b, int *c)
+__global__ void add_threads(int *a, int *b, int *c)
 {
-   c[blockIdx.x] = a[blockIdx.x] + b[blockIdx.x];
+   c[threadIdx.x] = a[threadIdx.x] + b[threadIdx.x];
 }
 
 //
@@ -32,9 +32,9 @@ int main(void)
    int size = N * sizeof(int);
    time_t t;
    
-   srand((unsigned) time(&t));
-   
    printf("DEBUG: Size of 'int' type: %lu\n", sizeof(int));
+   
+   srand((unsigned) time(&t));
 
    // initialise card
 
@@ -51,9 +51,14 @@ int main(void)
    
    for (int i=0; i < N; ++i)
    {
+#if 0
       a[i] = rand()%N;
       b[i] = rand()%N;
-      //printf("a[%d]=%d, b[%d]=%d\n",i, a[i], i, b[i]);
+#else
+      a[i] = 5;
+      b[i] = 5;
+
+#endif
 
    }
    printf("DEBUG: a[%d]=%d, b[%d]=%d\n",0, a[0], 0, b[0]);
@@ -63,11 +68,10 @@ int main(void)
    cudaMemcpy( dev_a, a, size, cudaMemcpyHostToDevice ); 
    cudaMemcpy( dev_b, b, size, cudaMemcpyHostToDevice );
 
-   printf("INFO: Launching CUDA kernel: add_block with blocks=%d, threads=%d...", N, 1);
-      
+   printf("INFO: Launching CUDA kernel: add_block with blocks=%d, threads=%d...", 1, N);
 
    // launch add() kernel with N parallel blocks
-   add_block<<< N, 1 >>>( dev_a, dev_b, dev_c );
+   add_threads<<< 1, N >>>( dev_a, dev_b, dev_c );
 
    printf("  Done\n");
 

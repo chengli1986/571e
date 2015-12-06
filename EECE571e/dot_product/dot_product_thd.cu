@@ -67,7 +67,7 @@ int main(int argc, char **argv)
    
    for (int i=0; i<N; i++)
    {
-#if 1
+#if 0
       a[i] = rand()%N;
       b[i] = rand()%N;
 #else
