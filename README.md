@@ -150,3 +150,112 @@ add<<<(N + M-1) / M,M>>>(d_a, d_b, d_c, N);
 * If an atomic instruction executed by a warp reads, modifies, and writes to the same location in global memory for more than one of the threads of the warp, each read/ modify/write to that location occurs and they are all serialized, but the order in which they occur is undefined.
 
 * 95% confidence interval: http://www.graphpad.com/guides/prism/6/statistics/index.htm?stat_more_about_confidence_interval.htm
+
+* Using NVCC to generate cubin, PTX, and SASS files
+```
+/Developer/NVIDIA/CUDA-6.0/bin/nvcc -ptx -gencode arch=compute_12,code=sm_12 vector_add_threads.cu 
+/Developer/NVIDIA/CUDA-6.0/bin/nvcc -cubin -gencode arch=compute_12,code=sm_12 vector_add_threads.cu 
+/Developer/NVIDIA/CUDA-6.0/bin/cuobjdump -sass vector_add_threads.cubin 
+```
+
+Examples are shown below for vector_add_threads.cu
+
+SASS file:
+```
+dhcp-206-87-194-89:vector_add chwlo$ /Developer/NVIDIA/CUDA-6.0/bin/cuobjdump -sass vector_add_threads.cubin 
+
+	code for sm_12
+		Function : _Z11add_threadsPiS_S_
+	.headerflags    @"EF_CUDA_SM10 EF_CUDA_PTX_SM(EF_CUDA_SM10)"
+        /*0000*/         I2I.U32.U16 R0, R0L;       /* 0x04000780a0000001 */
+        /*0008*/         SHL R2, R0, 0x2;           /* 0xc410078030020009 */
+        /*0010*/         IADD32 R0, g [0x4], R2;    /* 0x2102e800         */
+        /*0014*/         IADD32 R3, g [0x6], R2;    /* 0x2102ec0c         */
+        /*0018*/         GLD.U32 R1, global14[R0];  /* 0x80c00780d00e0005 */
+        /*0020*/         GLD.U32 R0, global14[R3];  /* 0x80c00780d00e0601 */
+        /*0028*/         IADD32 R1, R1, R0;         /* 0x20008204         */
+        /*002c*/         IADD32 R0, g [0x8], R2;    /* 0x2102f000         */
+        /*0030*/         GST.U32 global14[R0], R1;  /* 0xa0c00781d00e0005 */
+		......................................
+```
+PTX file:
+```
+	.version 1.4
+	.target sm_12, map_f64_to_f32
+	// compiled with /Developer/NVIDIA/CUDA-6.0/bin/../open64/lib//be
+	// nvopencc 4.1 built on 2014-04-01
+
+	//-----------------------------------------------------------
+	// Compiling /var/folders/4p/qx40xw9n1g5bll1hv0m968dm0000gn/T//tmpxft_000032e3_00000000-9_vector_add_threads.cpp3.i (/var/folders/4p/qx40xw9n1g5bll1hv0m968dm0000gn/T/ccBI#.ZvcIe8)
+	//-----------------------------------------------------------
+
+	//-----------------------------------------------------------
+	// Options:
+	//-----------------------------------------------------------
+	//  Target:ptx, ISA:sm_12, Endian:little, Pointer Size:64
+	//  -O3	(Optimization level)
+	//  -g0	(Debug level)
+	//  -m2	(Report advisories)
+	//-----------------------------------------------------------
+
+	.file	1	"/var/folders/4p/qx40xw9n1g5bll1hv0m968dm0000gn/T//tmpxft_000032e3_00000000-8_vector_add_threads.cudafe2.gpu"
+	.file	2	"/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/7.0.0/include/stddef.h"
+	.file	3	"/Developer/NVIDIA/CUDA-6.0/bin/../include/crt/device_runtime.h"
+	.file	4	"/Developer/NVIDIA/CUDA-6.0/bin/../include/host_defines.h"
+	.file	5	"/Developer/NVIDIA/CUDA-6.0/bin/../include/builtin_types.h"
+	.file	6	"/Developer/NVIDIA/CUDA-6.0/bin/../include/device_types.h"
+	.file	7	"/Developer/NVIDIA/CUDA-6.0/bin/../include/driver_types.h"
+	.file	8	"/Developer/NVIDIA/CUDA-6.0/bin/../include/surface_types.h"
+	.file	9	"/Developer/NVIDIA/CUDA-6.0/bin/../include/texture_types.h"
+	.file	10	"/Developer/NVIDIA/CUDA-6.0/bin/../include/vector_types.h"
+	.file	11	"/Developer/NVIDIA/CUDA-6.0/bin/../include/device_launch_parameters.h"
+	.file	12	"/Developer/NVIDIA/CUDA-6.0/bin/../include/crt/storage_class.h"
+	.file	13	"vector_add_threads.cu"
+	.file	14	"/Developer/NVIDIA/CUDA-6.0/bin/../include/common_functions.h"
+	.file	15	"/Developer/NVIDIA/CUDA-6.0/bin/../include/math_functions.h"
+	.file	16	"/Developer/NVIDIA/CUDA-6.0/bin/../include/math_constants.h"
+	.file	17	"/Developer/NVIDIA/CUDA-6.0/bin/../include/device_functions.h"
+	.file	18	"/Developer/NVIDIA/CUDA-6.0/bin/../include/sm_11_atomic_functions.h"
+	.file	19	"/Developer/NVIDIA/CUDA-6.0/bin/../include/sm_12_atomic_functions.h"
+	.file	20	"/Developer/NVIDIA/CUDA-6.0/bin/../include/sm_13_double_functions.h"
+	.file	21	"/Developer/NVIDIA/CUDA-6.0/bin/../include/sm_20_atomic_functions.h"
+	.file	22	"/Developer/NVIDIA/CUDA-6.0/bin/../include/sm_32_atomic_functions.h"
+	.file	23	"/Developer/NVIDIA/CUDA-6.0/bin/../include/sm_35_atomic_functions.h"
+	.file	24	"/Developer/NVIDIA/CUDA-6.0/bin/../include/sm_20_intrinsics.h"
+	.file	25	"/Developer/NVIDIA/CUDA-6.0/bin/../include/sm_30_intrinsics.h"
+	.file	26	"/Developer/NVIDIA/CUDA-6.0/bin/../include/sm_32_intrinsics.h"
+	.file	27	"/Developer/NVIDIA/CUDA-6.0/bin/../include/sm_35_intrinsics.h"
+	.file	28	"/Developer/NVIDIA/CUDA-6.0/bin/../include/surface_functions.h"
+	.file	29	"/Developer/NVIDIA/CUDA-6.0/bin/../include/texture_fetch_functions.h"
+	.file	30	"/Developer/NVIDIA/CUDA-6.0/bin/../include/texture_indirect_functions.h"
+	.file	31	"/Developer/NVIDIA/CUDA-6.0/bin/../include/surface_indirect_functions.h"
+	.file	32	"/Developer/NVIDIA/CUDA-6.0/bin/../include/math_functions_dbl_ptx1.h"
+
+
+	.entry _Z11add_threadsPiS_S_ (
+		.param .u64 __cudaparm__Z11add_threadsPiS_S__a,
+		.param .u64 __cudaparm__Z11add_threadsPiS_S__b,
+		.param .u64 __cudaparm__Z11add_threadsPiS_S__c)
+	{
+	.reg .u32 %r<5>;
+	.reg .u64 %rd<10>;
+	.loc	13	18	0
+$LDWbegin__Z11add_threadsPiS_S_:
+	.loc	13	20	0
+	cvt.u64.u16 	%rd1, %tid.x;
+	mul.lo.u64 	%rd2, %rd1, 4;
+	ld.param.u64 	%rd3, [__cudaparm__Z11add_threadsPiS_S__a];
+	add.u64 	%rd4, %rd3, %rd2;
+	ld.global.s32 	%r1, [%rd4+0];
+	ld.param.u64 	%rd5, [__cudaparm__Z11add_threadsPiS_S__b];
+	add.u64 	%rd6, %rd5, %rd2;
+	ld.global.s32 	%r2, [%rd6+0];
+	add.s32 	%r3, %r1, %r2;
+	ld.param.u64 	%rd7, [__cudaparm__Z11add_threadsPiS_S__c];
+	add.u64 	%rd8, %rd7, %rd2;
+	st.global.s32 	[%rd8+0], %r3;
+	.loc	13	21	0
+	exit;
+$LDWend__Z11add_threadsPiS_S_:
+	} // _Z11add_threadsPiS_S_
+```
